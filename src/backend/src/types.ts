@@ -128,3 +128,49 @@ export interface CompanyFinancials {
   navn: string;
   regnskapsaar: FinancialYear[];
 }
+
+// --- News API response types ---
+
+export interface NewsArticle {
+  title: string;
+  url: string;
+  source: string;
+  publishedAt: string;
+  description: string;
+  thumbnailUrl?: string;
+}
+
+export interface CompanyNews {
+  companyName: string;
+  articles: NewsArticle[];
+}
+
+// --- Bouvet prosjekter ---
+
+export interface BouvetProject {
+  tittel: string;
+  kunde: string;
+  url: string;
+  imageUrl?: string;
+  bransje: string;
+  kompetanseomraader: string[];
+}
+
+// --- Doffin anbud ---
+
+export interface DoffinNotice {
+  notice_id: string;
+  title: string;
+  description: string;
+  contracting_authority: {
+    name: string;
+    org_number: string;
+    region: string;
+  };
+  cpv_codes: string[];
+  estimated_value_nok: number;
+  procedure_type: string;
+  publication_date: string;
+  deadline_date: string;
+  status: string;
+}

@@ -66,6 +66,57 @@ h1, h2, h3 {
   margin-bottom: 1rem;
 }
 
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--bouvet-border);
+  margin-bottom: 1.5rem;
+}
+
+.tab-button {
+  padding: 0.75rem 1.5rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--bouvet-grey);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  font-family: inherit;
+}
+
+.tab-button:hover {
+  color: var(--bouvet-dark);
+}
+
+.tab-button.active {
+  color: var(--bouvet-orange);
+  border-bottom-color: var(--bouvet-orange);
+}
+
+.tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bouvet-grey-light);
+  color: var(--bouvet-grey);
+  font-size: 0.75rem;
+  font-weight: 600;
+  min-width: 1.4rem;
+  height: 1.4rem;
+  padding: 0 0.35rem;
+  border-radius: 10px;
+  margin-left: 0.4rem;
+}
+
+.tab-button.active .tab-badge {
+  background: #FFF0E6;
+  color: var(--bouvet-orange);
+}
+
 /* Responsive tweaks */
 @media (max-width: 600px) {
   body { font-size: 15px; }

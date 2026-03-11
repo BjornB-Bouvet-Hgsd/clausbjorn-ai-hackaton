@@ -129,38 +129,19 @@ Bygge en enkel web-app med søk på virksomhetsnavn / org.nr som viser omsetning
 # Plan: Nyhetsartikler om selskapet (Feature 2)
 
 ## TL;DR
-Utvide bedriftsøk-appen med en ny seksjon på detaljsiden som viser **nyhetsartikler og saker** som omtaler det aktuelle selskapet. Artikler hentes via et nyhets-API (Bing News Search eller Google Custom Search) med selskapsnavn som søkeord, filtrert på **de siste 3 år**. Vises som en kronologisk liste med tittel, kilde, dato og lenke.
+Utvide bedriftsøk-appen med en ny seksjon på detaljsiden som viser **nyhetsartikler og saker** som omtaler det aktuelle selskapet. Artikler hentes via **Google News RSS** med selskapsnavn som søkeord. Vises som en kronologisk liste med tittel, kilde, dato og lenke. Ingen API-nøkkel nødvendig.
 
 ---
 
-## Datakilder
+## Datakilde
 
-### Alternativ A: Brave Search API (anbefalt)
-- **URL**: `GET https://api.search.brave.com/res/v1/news/search?q={selskapsnavn}&count=20&freshness=py3`
-- **Fordeler**: Gratis tier (2 000 kall/mnd), ingen kredittkort nødvendig, gode nyhetsresultater, støtter norske kilder
-- **Returnerer**: `title`, `url`, `description`, `age`, `meta_url.favicon`, `thumbnail`
-- **Autentisering**: API-nøkkel via `X-Subscription-Token` header
-- **Rate limit**: 1 req/sek på gratisplan
-- **Registrering**: https://brave.com/search/api/
-
-### Alternativ B: Google Custom Search JSON API
-- **URL**: `GET https://www.googleapis.com/customsearch/v1?q={selskapsnavn}&cx={search_engine_id}&dateRestrict=y3&sort=date`
-- **Fordeler**: Godt treff på norske saker, kan begrenses til nyhetsdomener
-- **Begrensninger**: Gratis inntil 100 kall/dag. Krever Google Cloud-prosjekt + Custom Search Engine
-- **Autentisering**: API-nøkkel via `key=` query-param
-
-### Alternativ C: Bing News Search API (Azure)
-- **URL**: `GET https://api.bing.microsoft.com/v7.0/news/search?q={selskapsnavn}&freshness=Month&count=20&mkt=nb-NO`
-- **Fordeler**: Dedikert nyhets-API, god dekning, støtter norsk marked
-- **Begrensninger**: Krever Azure-abonnement (gratis tier: 1 000 kall/mnd)
-- **Autentisering**: `Ocp-Apim-Subscription-Key` header
-
-### Valg
-Vi bruker **Brave Search API** som primærkilde fordi:
-1. Genøros gratisplan (2 000 kall/mnd) uten kredittkort
-2. Dedikert `/news/search`-endepunkt
-3. Enkel API-nøkkel-autentisering
-4. Støtter `freshness=py3` (siste 3 år) direkte
+### Google News RSS (valgt)
+- **URL**: `GET https://news.google.com/rss/search?q={selskapsnavn}&hl=no&gl=NO&ceid=NO:no`
+- **Fordeler**: Helt gratis, ingen registrering, ingen API-nøkkel, god dekning av norske kilder
+- **Returnerer**: RSS/XML med `title`, `link`, `pubDate`, `description`, `source`
+- **Autentisering**: Ingen
+- **Rate limit**: Ingen offisiell, men fair use
+- **Parsing**: `fast-xml-parser` brukes for å parse RSS-feed
 
 ---
 
@@ -168,7 +149,7 @@ Vi bruker **Brave Search API** som primærkilde fordi:
 
 | Fil | Status | Beskrivelse |
 |-----|--------|-------------|
-| `src/backend/src/services/news.ts` | **Ny** | Integrasjon mot Brave News Search API |
+| `src/backend/src/services/news.ts` | **Ny** | Integrasjon mot Google News RSS |
 | `src/backend/src/routes/company.ts` | Endres | Nytt endepunkt: `GET /api/company/:orgnr/news` |
 | `src/backend/src/types.ts` | Endres | Nye typer for nyhetsartikler |
 | `src/frontend/src/services/api.ts` | Endres | Ny funksjon `getCompanyNews(orgnr)` |
@@ -252,22 +233,22 @@ export interface CompanyNews {
 ### Fase 7 – Nyhets-service (backend)
 > **Mål**: Fungerende service som søker etter nyheter om et selskap via Brave Search API.
 
-- [ ] Legg til nye typer i `src/backend/src/types.ts` (`NewsArticle`, `CompanyNews`, Brave-responstyper)
-- [ ] Opprett `src/backend/src/services/news.ts`:
+- [x] Legg til nye typer i `src/backend/src/types.ts` (`NewsArticle`, `CompanyNews`, Brave-responstyper)
+- [x] Opprett `src/backend/src/services/news.ts`:
   - Funksjon `searchCompanyNews(companyName: string): Promise<NewsArticle[]>`
   - Kall Brave News Search: `GET https://api.search.brave.com/res/v1/news/search?q={companyName}&count=20&freshness=py3`
   - API-nøkkel fra `process.env.BRAVE_API_KEY`
   - Map Brave-respons til `NewsArticle[]`
   - 10s timeout, feilhåndtering for 401/429/500
   - Returner tom liste ved feil (graceful degradation — nyheter er ikke kritisk)
-- [ ] Installer `dotenv` for miljøvariabler: `npm install dotenv`
-- [ ] Opprett `.env`-fil med `BRAVE_API_KEY=din_nøkkel_her` (legg til i `.gitignore`)
+- [x] Installer `dotenv` for miljøvariabler: `npm install dotenv`
+- [x] Opprett `.env`-fil med `BRAVE_API_KEY=din_nøkkel_her` (legg til i `.gitignore`)
 - [ ] Verifisering: Manuell test av `searchCompanyNews("Bouvet ASA")` → returnerer artikler
 
 ### Fase 8 – Nyhets-endepunkt (backend route)
 > **Mål**: Backend eksponerer REST-endepunkt for nyheter.
 
-- [ ] Legg til rute i `src/backend/src/routes/company.ts`:
+- [x] Legg til rute i `src/backend/src/routes/company.ts`:
   - `GET /api/company/:orgnr/news`
   - Valider orgnr (9 siffer)
   - Slå opp selskapsnavn via eksisterende `getCompany(orgnr)`
@@ -282,8 +263,8 @@ export interface CompanyNews {
 ### Fase 9 – Nyhetsvisning (frontend)
 > **Mål**: Detaljsiden viser en liste med nyhetsartikler om selskapet.
 
-- [ ] Legg til `getCompanyNews(orgnr)` i `src/frontend/src/services/api.ts`
-- [ ] Opprett `src/frontend/src/components/NewsList.tsx`:
+- [x] Legg til `getCompanyNews(orgnr)` i `src/frontend/src/services/api.ts`
+- [x] Opprett `src/frontend/src/components/NewsList.tsx`:
   - Motta `articles: NewsArticle[]` som props
   - Vis hver artikkel som kort med:
     - Tittel (klikkbar lenke, `target="_blank"`, `rel="noopener noreferrer"`)
@@ -293,7 +274,7 @@ export interface CompanyNews {
   - Sorter nyeste først
   - Vis "Ingen nyhetsartikler funnet" hvis tom liste
   - Vis "Nyheter er ikke tilgjengelig" hvis API-feil (graceful degradation)
-- [ ] Oppdater `src/frontend/src/pages/CompanyPage.tsx`:
+- [x] Oppdater `src/frontend/src/pages/CompanyPage.tsx`:
   - Hent nyheter med `getCompanyNews(orgnr)` (parallelt med financials)
   - Legg til `<NewsList>` under økonomiseksjonen
   - Separat loading-state for nyheter (ikke blokker resten av siden)
@@ -305,9 +286,9 @@ export interface CompanyNews {
 ### Fase 10 – Polish & konfigurasjon
 > **Mål**: Robust, brukervennlig nyhetsvisning.
 
-- [ ] Legg til graceful degradation: nyheter feiler stille (viser melding, blokkerer ikke resten)
+- [x] Legg til graceful degradation: nyheter feiler stille (viser melding, blokkerer ikke resten)
 - [ ] Dato-formatering: vis "15. oktober 2025" (norsk format)
-- [ ] Responsivt: nyhetskort stacker vertikalt på mobil
+- [x] Responsivt: nyhetskort stacker vertikalt på mobil
 - [ ] Valgfritt: "Vis flere"-knapp hvis > 5 artikler (vis 5 først)
 - [ ] Valgfritt: Cache nyhetsresultater i backend (in-memory, 15 min TTL)
 - [ ] Oppdater README med informasjon om `BRAVE_API_KEY`-oppsett
