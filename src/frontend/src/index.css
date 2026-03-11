@@ -1,0 +1,76 @@
+:root {
+  --bouvet-orange: #E8712B;
+  --bouvet-orange-hover: #D4631F;
+  --bouvet-dark: #1D1D1B;
+  --bouvet-grey-dark: #4A4A4A;
+  --bouvet-grey: #6B6B6B;
+  --bouvet-grey-light: #F5F5F3;
+  --bouvet-border: #E0E0DE;
+  --bouvet-white: #FFFFFF;
+  --bouvet-error: #C0392B;
+  --bouvet-error-bg: #FDEDEB;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Neue Haas Grotesk', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background: var(--bouvet-grey-light);
+  color: var(--bouvet-dark);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--bouvet-orange);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+a:hover {
+  color: var(--bouvet-orange-hover);
+  text-decoration: underline;
+}
+
+h1, h2, h3 {
+  font-weight: 700;
+  color: var(--bouvet-dark);
+  letter-spacing: -0.01em;
+}
+
+/* Loading spinner */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.spinner {
+  display: inline-block;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2.5px solid var(--bouvet-border);
+  border-top-color: var(--bouvet-orange);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  vertical-align: middle;
+}
+
+/* Error banner */
+.error-banner {
+  background: var(--bouvet-error-bg);
+  border: 1px solid #F5C6C0;
+  color: var(--bouvet-error);
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  body { font-size: 15px; }
+  .search-form { flex-direction: column; }
+  .search-form input, .search-form button { width: 100%; }
+  .financial-table { font-size: 0.85rem; }
+  .financial-table td, .financial-table th { padding: 0.4rem 0.5rem; }
+}
