@@ -15,12 +15,12 @@ function formatDate(dateStr: string): string {
 
 export default function DoffinList({ notices }: Props) {
   if (notices.length === 0) {
-    return <p style={{ color: '#6b7280' }}>Ingen relevante anbud funnet på Doffin.</p>;
+    return <p style={{ color: '#C3D5E1' }}>Ingen relevante anbud funnet på Doffin.</p>;
   }
 
   return (
     <div style={{ marginTop: '1.5rem' }}>
-      <h3 style={{ marginBottom: '0.75rem', color: '#1D1D1B' }}>Anbud fra Doffin</h3>
+      <h3 style={{ marginBottom: '0.75rem', color: '#FFFFFF' }}>Anbud fra Doffin</h3>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
         {notices.map((notice) => (
           <a
@@ -30,27 +30,27 @@ export default function DoffinList({ notices }: Props) {
             rel="noopener noreferrer"
             style={{
               display: 'block',
-              background: '#fff',
+              background: 'rgba(255,255,255,0.05)',
               padding: '1rem 1.25rem',
-              borderRadius: 6,
-              border: '1px solid #E0E0DE',
+              borderRadius: 8,
+              border: '1px solid rgba(255,255,255,0.1)',
               textDecoration: 'none',
               color: 'inherit',
               transition: 'border-color 0.15s',
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#E8712B')}
-            onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#E0E0DE')}
+            onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#1D43C6')}
+            onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)')}
           >
-            <div style={{ fontWeight: 600, color: '#1D1D1B', marginBottom: '0.25rem' }}>
+            <div style={{ fontWeight: 600, color: '#FFFFFF', marginBottom: '0.25rem' }}>
               {notice.title}
             </div>
-            <div style={{ fontSize: '0.8rem', color: '#6B6B6B', marginBottom: '0.35rem' }}>
+            <div style={{ fontSize: '0.8rem', color: '#C3D5E1', marginBottom: '0.35rem' }}>
               {notice.contracting_authority.name} · {notice.contracting_authority.region} · {notice.status}
             </div>
             <div
               style={{
                 fontSize: '0.9rem',
-                color: '#444',
+                color: '#C3D5E1',
                 display: '-webkit-box',
                 WebkitLineClamp: 2,
                 WebkitBoxOrient: 'vertical',
@@ -60,7 +60,7 @@ export default function DoffinList({ notices }: Props) {
             >
               {notice.description}
             </div>
-            <div style={{ display: 'flex', gap: '1.5rem', fontSize: '0.8rem', color: '#6B6B6B' }}>
+            <div style={{ display: 'flex', gap: '1.5rem', fontSize: '0.8rem', color: '#C3D5E1' }}>
               <span>Frist: {formatDate(notice.deadline_date)}</span>
               <span>Verdi: {formatNOK(notice.estimated_value_nok)}</span>
               <span>{notice.procedure_type}</span>

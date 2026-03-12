@@ -4,6 +4,7 @@ import { getFinancials } from '../services/regnskap';
 import { searchCompanyNews } from '../services/news';
 import { searchBouvetProjects } from '../services/bouvet';
 import { searchDoffinNotices } from '../services/doffin';
+import { getCompanyRoles } from '../services/roles';
 
 const router = Router();
 
@@ -112,6 +113,29 @@ router.get('/:orgnr/bouvet-projects', async (req: Request, res: Response) => {
     }
     console.error('Bouvet-prosjekter feilet:', err);
     res.status(502).json({ error: 'Kunne ikke hente Bouvet-prosjekter' });
+  }
+});
+
+// GET /api/company/:orgnr/people
+router.get('/:orgnr/people', async (req: Request, res: Response) => {
+  const orgnr = req.params.orgnr as string;
+
+  if (!/^\d{9}$/.test(orgnr)) {
+    res.status(400).json({ error: 'Ugyldig organisasjonsnummer (må være 9 siffer)' });
+    return;
+  }
+
+  try {
+    const company = await getCompany(orgnr);
+    const people = await getCompanyRoles(orgnr, company.navn);
+    res.json(people);
+  } catch (err) {
+    if (err instanceof NotFoundError) {
+      res.status(404).json({ error: err.message });
+      return;
+    }
+    console.error('Roller-oppslag feilet:', err);
+    res.status(502).json({ error: 'Kunne ikke hente roller' });
   }
 });
 

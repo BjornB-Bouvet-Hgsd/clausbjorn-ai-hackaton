@@ -102,6 +102,27 @@ export async function getBouvetProjects(orgnr: string): Promise<BouvetProjectsRe
   return res.json();
 }
 
+// --- Personer (roller) ---
+
+export interface PersonRole {
+  name: string;
+  role: string;
+  resigned: boolean;
+  linkedinSearchUrl: string | null;
+}
+
+export interface CompanyPeople {
+  organisasjonsnummer: string;
+  dagligLeder: PersonRole | null;
+  styreleder: PersonRole | null;
+}
+
+export async function getCompanyPeople(orgnr: string): Promise<CompanyPeople> {
+  const res = await fetch(`${BASE}/${orgnr}/people`);
+  if (!res.ok) throw new Error('Kunne ikke hente personer');
+  return res.json();
+}
+
 // --- Doffin anbud ---
 
 export interface DoffinNotice {

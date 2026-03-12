@@ -23,7 +23,8 @@ No database — all data is fetched on demand from external sources.
 │                                   ├─ Økonomi (table+chart)│
 │                                   ├─ Nyheter             │
 │                                   ├─ Bouvet-prosjekter   │
-│                                   └─ Doffin-anbud        │
+│                                   ├─ Doffin-anbud        │
+│                                   └─ Personer (LinkedIn)  │
 └────────────────────┬────────────────────────────────────┘
                      │  /api/company/*  (Vite proxy)
 ┌────────────────────▼────────────────────────────────────┐
@@ -34,6 +35,8 @@ No database — all data is fetched on demand from external sources.
 │    GET /:orgnr           regnskap.ts ─────► Brreg       │
 │    GET /:orgnr/financials                    Regnskap   │
 │    GET /:orgnr/news      news.ts ─────────► Google News │
+│    GET /:orgnr/people    roles.ts ────────► Brreg Roller│
+│                          linkedin.ts ─────  (URL gen)   │
 │    GET /:orgnr/bouvet    bouvet.ts ───────► Bouvet.no   │
 │    GET /:orgnr/doffin    doffin.ts ───────► (mock data) │
 └─────────────────────────────────────────────────────────┘
@@ -45,6 +48,13 @@ No database — all data is fetched on demand from external sources.
   │Enhets-   │ │Regnskaps-│ │  News RSS │ │ Search    │
   │registeret│ │registeret│ │           │ │ API       │
   └──────────┘ └──────────┘ └───────────┘ └───────────┘
+                     │
+              ┌──────┘
+              ▼
+  ┌───────────────────┐
+  │  Brreg Roller API │
+  │ (nøkkelpersoner)  │
+  └───────────────────┘
 ```
 
 ## External Data Sources
@@ -75,7 +85,14 @@ No database — all data is fetched on demand from external sources.
 - **Provides:** Bouvet consulting projects for the company — title, customer name, URL, image, tags.
 - **Used by:** `bouvet.ts` (filters results to `/prosjekter/` pages, deduplicates)
 
-### 5. Doffin (Mock)
+### 5. Brønnøysundregistrene — Roller API
+
+- **URL:** `https://data.brreg.no/enhetsregisteret/api/enheter/{orgnr}/roller`
+- **Provides:** Key people for this company — Daglig leder (CEO) and Styrets leder (Board chair) with names.
+- **License:** NLOD (Norwegian open data)
+- **Used by:** `roles.ts` (fetches roles), `linkedin.ts` (generates LinkedIn people-search URL per person)
+
+### 6. Doffin (Mock)
 
 - **Source:** Hardcoded mock data in `doffin.ts`
 - **Provides:** Public procurement notices — notice ID, title, contracting authority, estimated value, deadline, status, procedure type.
@@ -92,6 +109,7 @@ All endpoints live under `/api/company`:
 | `GET /:orgnr/financials`      | Financial statements (3 years)   |
 | `GET /:orgnr/news`            | News articles                    |
 | `GET /:orgnr/bouvet-projects` | Bouvet project history           |
+| `GET /:orgnr/people`          | Key people + LinkedIn search URLs|
 | `GET /:orgnr/doffin`          | Procurement notices (mock)       |
 
 Input validation enforces 9-digit org numbers. External API calls use 10–15 second timeouts.
@@ -104,6 +122,7 @@ Input validation enforces 9-digit org numbers. External API calls use 10–15 se
   - **Nyheter** — News article list
   - **Bouvet-prosjekter** — Project cards with thumbnails
   - **Doffin-anbud** — Procurement notice cards
+  - **Personer** — Key people (Daglig leder, Styrets leder) with LinkedIn search links
 
 Company details and financials load immediately. News, Bouvet projects, and Doffin data load in parallel with loading indicators.
 
@@ -112,7 +131,7 @@ Company details and financials load immediately. News, Bouvet projects, and Doff
 1. User searches on `SearchPage` → frontend calls `GET /api/company/search?query=...`
 2. Backend queries Brreg Enhetsregisteret → returns matching companies
 3. User clicks a result → navigates to `/company/:orgnr`
-4. `CompanyPage` fires parallel requests for details, financials, news, projects, and procurement
+4. `CompanyPage` fires parallel requests for details, financials, news, projects, people, and procurement
 5. Backend fetches from the respective external sources and returns JSON
 6. Frontend renders each section as data arrives
 
@@ -130,7 +149,9 @@ src/
 │           ├── regnskap.ts     # Regnskapsregisteret client
 │           ├── news.ts         # Google News RSS parser
 │           ├── bouvet.ts       # Bouvet.no search client
-│           └── doffin.ts       # Mock Doffin data
+│           ├── doffin.ts       # Mock Doffin data
+│           ├── roles.ts        # Brreg Roller API client
+│           └── linkedin.ts     # LinkedIn search URL generator
 └── frontend/
     └── src/
         ├── App.tsx             # Router + layout
@@ -142,7 +163,8 @@ src/
         │   ├── FinancialChart.tsx
         │   ├── NewsList.tsx
         │   ├── BouvetProjectList.tsx
-        │   └── DoffinList.tsx
+        │   ├── DoffinList.tsx
+        │   └── PeopleList.tsx
         └── services/api.ts     # Backend API client
 ```
 

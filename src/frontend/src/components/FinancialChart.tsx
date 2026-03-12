@@ -21,18 +21,18 @@ export default function FinancialChart({ years }: { years: FinancialYear[] }) {
   }));
 
   return (
-    <div style={{ background: '#fff', padding: '1.5rem', borderRadius: 6, border: '1px solid #E0E0DE', marginTop: '1.5rem' }}>
-      <h3 style={{ marginBottom: '1rem', color: '#1D1D1B' }}>Utvikling</h3>
+    <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: 8, border: '1px solid rgba(255,255,255,0.1)', marginTop: '1.5rem' }}>
+      <h3 style={{ marginBottom: '1rem', color: '#FFFFFF' }}>Utvikling</h3>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 10 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#F0F0EE" />
-          <XAxis dataKey="name" />
-          <YAxis tickFormatter={fmtMillions} width={70} />
-          <Tooltip formatter={(v) => fmtTooltip(Number(v))} />
-          <Legend />
-          <Bar dataKey="Driftsinntekter" fill="#E8712B" radius={[4, 4, 0, 0]} />
-          <Bar dataKey="Driftsresultat" fill="#1D1D1B" radius={[4, 4, 0, 0]} />
-          <Bar dataKey="Årsresultat" fill="#F4A261" radius={[4, 4, 0, 0]} />
+          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
+          <XAxis dataKey="name" stroke="#C3D5E1" />
+          <YAxis tickFormatter={fmtMillions} width={70} stroke="#C3D5E1" />
+          <Tooltip formatter={(v) => fmtTooltip(Number(v))} contentStyle={{ background: '#11133C', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 8, color: '#FFFFFF' }} />
+          <Legend wrapperStyle={{ color: '#C3D5E1' }} />
+          <Bar dataKey="Driftsinntekter" fill="#1D43C6" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="Driftsresultat" fill="#78FE9C" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="Årsresultat" fill="#F9A86F" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>

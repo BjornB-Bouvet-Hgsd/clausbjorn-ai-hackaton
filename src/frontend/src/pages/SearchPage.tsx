@@ -39,13 +39,15 @@ export default function SearchPage() {
             flex: 1,
             padding: '0.75rem 1rem',
             fontSize: '1rem',
-            border: '2px solid #E0E0DE',
-            borderRadius: 6,
+            border: '2px solid rgba(255,255,255,0.15)',
+            borderRadius: 8,
             outline: 'none',
             transition: 'border-color 0.15s',
+            background: 'rgba(255,255,255,0.05)',
+            color: '#FFFFFF',
           }}
-          onFocus={(e) => e.currentTarget.style.borderColor = '#E8712B'}
-          onBlur={(e) => e.currentTarget.style.borderColor = '#E0E0DE'}
+          onFocus={(e) => e.currentTarget.style.borderColor = '#1D43C6'}
+          onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'}
         />
         <button
           type="submit"
@@ -53,16 +55,16 @@ export default function SearchPage() {
           style={{
             padding: '0.75rem 1.5rem',
             fontSize: '1rem',
-            background: '#E8712B',
+            background: '#1D43C6',
             color: '#fff',
             border: 'none',
-            borderRadius: 6,
+            borderRadius: 8,
             cursor: 'pointer',
             fontWeight: 600,
             transition: 'background 0.15s',
           }}
-          onMouseOver={(e) => e.currentTarget.style.background = '#D4631F'}
-          onMouseOut={(e) => e.currentTarget.style.background = '#E8712B'}
+          onMouseOver={(e) => e.currentTarget.style.background = '#1639A8'}
+          onMouseOut={(e) => e.currentTarget.style.background = '#1D43C6'}
         >
           {loading ? 'Søker...' : 'Søk'}
         </button>
@@ -71,7 +73,7 @@ export default function SearchPage() {
       {error && <div className="error-banner">{error}</div>}
 
       {searched && !loading && results.length === 0 && !error && (
-        <p style={{ color: '#6b7280' }}>Ingen treff.</p>
+        <p style={{ color: '#C3D5E1' }}>Ingen treff.</p>
       )}
 
       {results.length > 0 && (
@@ -80,22 +82,22 @@ export default function SearchPage() {
             <li
               key={r.organisasjonsnummer}
               style={{
-                background: '#fff',
+                background: 'rgba(255,255,255,0.05)',
                 padding: '1rem 1.25rem',
-                borderRadius: 6,
-                border: '1px solid #E0E0DE',
-                transition: 'box-shadow 0.15s',
+                borderRadius: 8,
+                border: '1px solid rgba(255,255,255,0.1)',
+                transition: 'border-color 0.15s, background 0.15s',
               }}
-              onMouseOver={(e) => e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)'}
-              onMouseOut={(e) => e.currentTarget.style.boxShadow = 'none'}
+              onMouseOver={(e) => { e.currentTarget.style.borderColor = '#1D43C6'; e.currentTarget.style.background = 'rgba(29,67,198,0.1)'; }}
+              onMouseOut={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
             >
               <Link
                 to={`/company/${r.organisasjonsnummer}`}
-                style={{ fontSize: '1.1rem', fontWeight: 600, color: '#1D1D1B' }}
+                style={{ fontSize: '1.1rem', fontWeight: 600, color: '#FFFFFF' }}
               >
                 {r.navn}
               </Link>
-              <div style={{ color: '#6B6B6B', fontSize: '0.9rem', marginTop: '0.25rem' }}>
+              <div style={{ color: '#C3D5E1', fontSize: '0.9rem', marginTop: '0.25rem' }}>
                 {r.organisasjonsnummer}
                 {r.organisasjonsform && ` · ${r.organisasjonsform}`}
                 {r.poststed && ` · ${r.poststed}`}

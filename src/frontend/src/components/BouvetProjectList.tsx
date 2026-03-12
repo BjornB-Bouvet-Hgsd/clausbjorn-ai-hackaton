@@ -6,12 +6,12 @@ interface Props {
 
 export default function BouvetProjectList({ projects }: Props) {
   if (projects.length === 0) {
-    return <p style={{ color: '#6b7280' }}>Ingen Bouvet-prosjekter funnet for dette selskapet.</p>;
+    return <p style={{ color: '#C3D5E1' }}>Ingen Bouvet-prosjekter funnet for dette selskapet.</p>;
   }
 
   return (
     <div style={{ marginTop: '1.5rem' }}>
-      <h3 style={{ marginBottom: '0.75rem', color: '#1D1D1B' }}>Bouvet-prosjekter</h3>
+      <h3 style={{ marginBottom: '0.75rem', color: '#FFFFFF' }}>Bouvet-prosjekter</h3>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
         {projects.map((p, i) => (
           <a
@@ -22,16 +22,16 @@ export default function BouvetProjectList({ projects }: Props) {
             style={{
               display: 'flex',
               gap: '1rem',
-              background: '#fff',
+              background: 'rgba(255,255,255,0.05)',
               padding: '1rem 1.25rem',
-              borderRadius: 6,
-              border: '1px solid #E0E0DE',
+              borderRadius: 8,
+              border: '1px solid rgba(255,255,255,0.1)',
               textDecoration: 'none',
               color: 'inherit',
               transition: 'border-color 0.15s',
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#E8712B')}
-            onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#E0E0DE')}
+            onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#1D43C6')}
+            onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)')}
           >
             {p.imageUrl && (
               <img
@@ -47,11 +47,11 @@ export default function BouvetProjectList({ projects }: Props) {
               />
             )}
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 600, color: '#1D1D1B', marginBottom: '0.25rem' }}>
+              <div style={{ fontWeight: 600, color: '#FFFFFF', marginBottom: '0.25rem' }}>
                 {p.tittel}
               </div>
               {p.kunde && (
-                <div style={{ fontSize: '0.85rem', color: '#6B6B6B', marginBottom: '0.25rem' }}>
+                <div style={{ fontSize: '0.85rem', color: '#C3D5E1', marginBottom: '0.25rem' }}>
                   {p.kunde}
                 </div>
               )}
@@ -59,8 +59,8 @@ export default function BouvetProjectList({ projects }: Props) {
                 {p.bransje && (
                   <span style={{
                     fontSize: '0.75rem',
-                    background: '#F0F0EE',
-                    color: '#1D1D1B',
+                    background: 'rgba(255,255,255,0.1)',
+                    color: '#C3D5E1',
                     padding: '0.15rem 0.5rem',
                     borderRadius: 12,
                   }}>
@@ -70,8 +70,8 @@ export default function BouvetProjectList({ projects }: Props) {
                 {p.kompetanseomraader.map((k, j) => (
                   <span key={j} style={{
                     fontSize: '0.75rem',
-                    background: '#FFF3EB',
-                    color: '#E8712B',
+                    background: 'rgba(29,67,198,0.2)',
+                    color: '#78FE9C',
                     padding: '0.15rem 0.5rem',
                     borderRadius: 12,
                   }}>
@@ -79,7 +79,7 @@ export default function BouvetProjectList({ projects }: Props) {
                   </span>
                 ))}
               </div>
-              <div style={{ fontSize: '0.8rem', color: '#E8712B', marginTop: '0.35rem' }}>
+              <div style={{ fontSize: '0.8rem', color: '#78FE9C', marginTop: '0.35rem' }}>
                 Les mer på bouvet.no →
               </div>
             </div>

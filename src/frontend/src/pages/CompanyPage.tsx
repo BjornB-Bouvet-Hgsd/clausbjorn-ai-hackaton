@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getCompany, getFinancials, getCompanyNews, getBouvetProjects, getDoffinNotices, CompanyDetails, CompanyFinancials, CompanyNews, BouvetProjectsResponse, DoffinResponse } from '../services/api';
+import { getCompany, getFinancials, getCompanyNews, getBouvetProjects, getDoffinNotices, getCompanyPeople, CompanyDetails, CompanyFinancials, CompanyNews, BouvetProjectsResponse, DoffinResponse, CompanyPeople } from '../services/api';
 import FinancialTable from '../components/FinancialTable';
 import FinancialChart from '../components/FinancialChart';
 import NewsList from '../components/NewsList';
 import BouvetProjectList from '../components/BouvetProjectList';
 import DoffinList from '../components/DoffinList';
+import PeopleList from '../components/PeopleList';
 
-type Tab = 'okonomi' | 'nyheter' | 'prosjekter' | 'anbud';
+type Tab = 'okonomi' | 'nyheter' | 'prosjekter' | 'anbud' | 'personer';
 
 export default function CompanyPage() {
   const { orgnr } = useParams<{ orgnr: string }>();
@@ -16,9 +17,11 @@ export default function CompanyPage() {
   const [news, setNews] = useState<CompanyNews | null>(null);
   const [bouvetProjects, setBouvetProjects] = useState<BouvetProjectsResponse | null>(null);
   const [doffin, setDoffin] = useState<DoffinResponse | null>(null);
+  const [people, setPeople] = useState<CompanyPeople | null>(null);
   const [newsLoading, setNewsLoading] = useState(true);
   const [projectsLoading, setProjectsLoading] = useState(true);
   const [doffinLoading, setDoffinLoading] = useState(true);
+  const [peopleLoading, setPeopleLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState<Tab>('okonomi');
@@ -50,6 +53,11 @@ export default function CompanyPage() {
       .then(setDoffin)
       .catch(() => setDoffin(null))
       .finally(() => setDoffinLoading(false));
+
+    getCompanyPeople(orgnr)
+      .then(setPeople)
+      .catch(() => setPeople(null))
+      .finally(() => setPeopleLoading(false));
   }, [orgnr]);
 
   if (loading) return <p><span className="spinner" /> Laster selskapsdata...</p>;
@@ -61,27 +69,28 @@ export default function CompanyPage() {
   const newsCount = news?.articles.length ?? 0;
   const projectCount = bouvetProjects?.projects.length ?? 0;
   const doffinCount = doffin?.notices.length ?? 0;
+  const peopleCount = (people?.dagligLeder ? 1 : 0) + (people?.styreleder ? 1 : 0);
 
   return (
     <div>
-      <Link to="/" style={{ fontSize: '0.9rem', marginBottom: '1rem', display: 'inline-block', color: '#E8712B' }}>
+      <Link to="/" style={{ fontSize: '0.9rem', marginBottom: '1rem', display: 'inline-block', color: '#78FE9C' }}>
         ← Tilbake til søk
       </Link>
 
-      <div style={{ background: '#fff', padding: '1.5rem', borderRadius: 6, border: '1px solid #E0E0DE', marginBottom: '1.5rem' }}>
-        <h2 style={{ marginBottom: '0.75rem', color: '#1D1D1B' }}>{company.navn}</h2>
+      <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: 8, border: '1px solid rgba(255,255,255,0.1)', marginBottom: '1.5rem' }}>
+        <h2 style={{ marginBottom: '0.75rem', color: '#FFFFFF' }}>{company.navn}</h2>
         <table style={{ fontSize: '0.95rem', lineHeight: 2 }}>
           <tbody>
-            <tr><td style={{ color: '#6B6B6B', paddingRight: '1.5rem' }}>Org.nr</td><td>{company.organisasjonsnummer}</td></tr>
-            {company.organisasjonsform && <tr><td style={{ color: '#6B6B6B', paddingRight: '1.5rem' }}>Type</td><td>{company.organisasjonsform}</td></tr>}
-            {company.naeringskode && <tr><td style={{ color: '#6B6B6B', paddingRight: '1.5rem' }}>Næring</td><td>{company.naeringskode}</td></tr>}
-            {addr && <tr><td style={{ color: '#6B6B6B', paddingRight: '1.5rem' }}>Adresse</td><td>{[...(addr.adresse ?? []), `${addr.postnummer ?? ''} ${addr.poststed ?? ''}`].join(', ')}</td></tr>}
-            {company.antallAnsatte != null && <tr><td style={{ color: '#6B6B6B', paddingRight: '1.5rem' }}>Ansatte</td><td>{company.antallAnsatte}</td></tr>}
-            {company.stiftelsesdato && <tr><td style={{ color: '#6B6B6B', paddingRight: '1.5rem' }}>Stiftet</td><td>{company.stiftelsesdato}</td></tr>}
-            {company.konkurs && <tr><td style={{ color: '#6B6B6B', paddingRight: '1.5rem' }}>Status</td><td style={{ color: '#C0392B', fontWeight: 600 }}>Under konkurs</td></tr>}
+            <tr><td style={{ color: '#C3D5E1', paddingRight: '1.5rem' }}>Org.nr</td><td style={{ color: '#FFFFFF' }}>{company.organisasjonsnummer}</td></tr>
+            {company.organisasjonsform && <tr><td style={{ color: '#C3D5E1', paddingRight: '1.5rem' }}>Type</td><td style={{ color: '#FFFFFF' }}>{company.organisasjonsform}</td></tr>}
+            {company.naeringskode && <tr><td style={{ color: '#C3D5E1', paddingRight: '1.5rem' }}>Næring</td><td style={{ color: '#FFFFFF' }}>{company.naeringskode}</td></tr>}
+            {addr && <tr><td style={{ color: '#C3D5E1', paddingRight: '1.5rem' }}>Adresse</td><td style={{ color: '#FFFFFF' }}>{[...(addr.adresse ?? []), `${addr.postnummer ?? ''} ${addr.poststed ?? ''}`].join(', ')}</td></tr>}
+            {company.antallAnsatte != null && <tr><td style={{ color: '#C3D5E1', paddingRight: '1.5rem' }}>Ansatte</td><td style={{ color: '#FFFFFF' }}>{company.antallAnsatte}</td></tr>}
+            {company.stiftelsesdato && <tr><td style={{ color: '#C3D5E1', paddingRight: '1.5rem' }}>Stiftet</td><td style={{ color: '#FFFFFF' }}>{company.stiftelsesdato}</td></tr>}
+            {company.konkurs && <tr><td style={{ color: '#C3D5E1', paddingRight: '1.5rem' }}>Status</td><td style={{ color: '#EE2950', fontWeight: 600 }}>Under konkurs</td></tr>}
           </tbody>
         </table>
-        <p style={{ marginTop: '0.75rem', fontSize: '0.85rem', color: '#6b7280' }}>
+        <p style={{ marginTop: '0.75rem', fontSize: '0.85rem', color: '#C3D5E1' }}>
           Se mer på{' '}
           <a href={`https://proff.no/selskap/-/${company.organisasjonsnummer}`} target="_blank" rel="noopener noreferrer">
             Proff.no
@@ -118,6 +127,13 @@ export default function CompanyPage() {
           Anbud
           {!doffinLoading && doffinCount > 0 && <span className="tab-badge">{doffinCount}</span>}
         </button>
+        <button
+          className={`tab-button${activeTab === 'personer' ? ' active' : ''}`}
+          onClick={() => setActiveTab('personer')}
+        >
+          Personer
+          {!peopleLoading && peopleCount > 0 && <span className="tab-badge">{peopleCount}</span>}
+        </button>
       </div>
 
       {activeTab === 'okonomi' && (
@@ -127,7 +143,7 @@ export default function CompanyPage() {
             <FinancialChart years={financials.regnskapsaar} />
           </>
         ) : (
-          <p style={{ color: '#6b7280' }}>Ingen regnskapsdata tilgjengelig.</p>
+          <p style={{ color: '#C3D5E1' }}>Ingen regnskapsdata tilgjengelig.</p>
         )
       )}
 
@@ -137,7 +153,7 @@ export default function CompanyPage() {
         ) : news && newsCount > 0 ? (
           <NewsList articles={news.articles} />
         ) : (
-          <p style={{ color: '#6b7280' }}>Ingen nyhetsartikler funnet.</p>
+          <p style={{ color: '#C3D5E1' }}>Ingen nyhetsartikler funnet.</p>
         )
       )}
 
@@ -147,7 +163,7 @@ export default function CompanyPage() {
         ) : bouvetProjects && projectCount > 0 ? (
           <BouvetProjectList projects={bouvetProjects.projects} />
         ) : (
-          <p style={{ color: '#6b7280' }}>Ingen Bouvet-prosjekter funnet for dette selskapet.</p>
+          <p style={{ color: '#C3D5E1' }}>Ingen Bouvet-prosjekter funnet for dette selskapet.</p>
         )
       )}
 
@@ -157,7 +173,17 @@ export default function CompanyPage() {
         ) : doffin && doffinCount > 0 ? (
           <DoffinList notices={doffin.notices} />
         ) : (
-          <p style={{ color: '#6b7280' }}>Ingen relevante anbud funnet på Doffin.</p>
+          <p style={{ color: '#C3D5E1' }}>Ingen relevante anbud funnet på Doffin.</p>
+        )
+      )}
+
+      {activeTab === 'personer' && (
+        peopleLoading ? (
+          <p><span className="spinner" /> Henter nøkkelpersoner...</p>
+        ) : people ? (
+          <PeopleList dagligLeder={people.dagligLeder} styreleder={people.styreleder} />
+        ) : (
+          <p style={{ color: '#C3D5E1' }}>Kunne ikke hente roller for dette selskapet.</p>
         )
       )}
     </div>

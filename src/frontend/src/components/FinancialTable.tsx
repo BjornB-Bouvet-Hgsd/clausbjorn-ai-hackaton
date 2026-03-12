@@ -7,14 +7,14 @@ function fmt(value: number | undefined): string {
 
 export default function FinancialTable({ years }: { years: FinancialYear[] }) {
   return (
-    <div style={{ background: '#fff', padding: '1.5rem', borderRadius: 6, border: '1px solid #E0E0DE', overflowX: 'auto' }}>
-      <h3 style={{ marginBottom: '1rem', color: '#1D1D1B' }}>Økonomi</h3>
+    <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: 8, border: '1px solid rgba(255,255,255,0.1)', overflowX: 'auto' }}>
+      <h3 style={{ marginBottom: '1rem', color: '#FFFFFF' }}>Økonomi</h3>
       <table className="financial-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.95rem' }}>
         <thead>
-          <tr style={{ borderBottom: '2px solid #E0E0DE', textAlign: 'right' }}>
-            <th style={{ textAlign: 'left', padding: '0.5rem' }}>Nøkkeltall</th>
+          <tr style={{ borderBottom: '2px solid rgba(255,255,255,0.1)', textAlign: 'right' }}>
+            <th style={{ textAlign: 'left', padding: '0.5rem', color: '#C3D5E1' }}>Nøkkeltall</th>
             {years.map((y) => (
-              <th key={y.aar} style={{ padding: '0.5rem 1rem' }}>{y.aar}</th>
+              <th key={y.aar} style={{ padding: '0.5rem 1rem', color: '#C3D5E1' }}>{y.aar}</th>
             ))}
           </tr>
         </thead>
@@ -38,10 +38,10 @@ function Row({ label, years, field, highlight }: {
   highlight?: boolean;
 }) {
   return (
-    <tr style={{ borderBottom: '1px solid #F0F0EE' }}>
-      <td style={{ padding: '0.5rem', fontWeight: highlight ? 600 : 400 }}>{label}</td>
+    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+      <td style={{ padding: '0.5rem', fontWeight: highlight ? 600 : 400, color: '#C3D5E1' }}>{label}</td>
       {years.map((y) => (
-        <td key={y.aar} style={{ textAlign: 'right', padding: '0.5rem 1rem', fontWeight: highlight ? 600 : 400 }}>
+        <td key={y.aar} style={{ textAlign: 'right', padding: '0.5rem 1rem', fontWeight: highlight ? 600 : 400, color: highlight ? '#78FE9C' : '#FFFFFF' }}>
           {fmt(y[field] as number | undefined)}
         </td>
       ))}

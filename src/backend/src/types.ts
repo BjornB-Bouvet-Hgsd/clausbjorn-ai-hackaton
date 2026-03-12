@@ -156,6 +156,47 @@ export interface BouvetProject {
   kompetanseomraader: string[];
 }
 
+// --- Roller (People) ---
+
+export interface BrregRollePersonNavn {
+  fornavn: string;
+  mellomnavn?: string;
+  etternavn: string;
+}
+
+export interface BrregRollePerson {
+  fodselsdato?: string;
+  navn: BrregRollePersonNavn;
+}
+
+export interface BrregRolle {
+  type: { kode: string; beskrivelse: string };
+  person?: BrregRollePerson;
+  fratraadt?: boolean;
+}
+
+export interface BrregRollegruppe {
+  type: { kode: string; beskrivelse: string };
+  roller: BrregRolle[];
+}
+
+export interface BrregRollerResponse {
+  rollegrupper: BrregRollegruppe[];
+}
+
+export interface PersonRole {
+  name: string;
+  role: string;
+  resigned: boolean;
+  linkedinSearchUrl: string | null;
+}
+
+export interface CompanyPeople {
+  organisasjonsnummer: string;
+  dagligLeder: PersonRole | null;
+  styreleder: PersonRole | null;
+}
+
 // --- Doffin anbud ---
 
 export interface DoffinNotice {
